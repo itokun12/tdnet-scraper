@@ -9,7 +9,7 @@ def execute
   previous_reports = []
 
   loop do
-    today = Time.now.strftime("%Y%m%d")
+    today = Time.now.strftime('%Y%m%d')
     # today = '20190426'
 
     reports = fetch_all_reports_by_date(today)
@@ -32,7 +32,10 @@ def fetch_all_reports_by_date(date)
   loop do
     url = build_url(page_index, date)
     doc = Nokogiri::HTML(open(url))
-    reports << doc.css('#main-list-table').css('tr')
+    page_reports = doc.css('#main-list-table').css('tr')
+    break unless page_reports
+
+    reports << page_reports
     reports.flatten!
     page_index = doc.at_css('.pager-R').attributes['onclick'].value.split('_')[2]
     break unless page_index
